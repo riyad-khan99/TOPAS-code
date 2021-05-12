@@ -1,0 +1,149 @@
+i:Ts/Seed = 1 # default is 1
+#----------Define the enviroment and a Box of water of 2x2x2cm------
+
+#defining the world
+s:Ge/World/Material  = "Vacuum"
+d:Ge/World/HLX   	= 5.0 m
+d:Ge/World/HLY   	= 5.0 m
+d:Ge/World/HLZ   	= 5.0 m
+b:Ge/World/Invisible = "True"
+#------------box-------------
+s:Ge/Phantom/Type 	= "TsBox"
+s:Ge/Phantom/Parent   = "World"
+s:Ge/Phantom/Material = "G4_WATER"
+d:Ge/Phantom/HLX  	= .50 mm
+d:Ge/Phantom/HLY  	= .50 mm
+d:Ge/Phantom/HLZ  	= .50 mm
+#d:Ge/Phantom/TransZ   = 0 cm
+s:Ge/Phantom/Color	= "yellow"
+i:Ge/Phantom/XBins	= 1
+i:Ge/Phantom/YBins	= 1
+i:Ge/Phantom/ZBins	= 1
+
+#place two spheres at the centre of the box
+#parent will be phantom
+0/0
+#----------ellipsoid 1(cross dose) ------------
+
+s:Ge/Ellipsoid1/Type          	= "G4Ellipsoid"
+s:Ge/Ellipsoid1/Parent        	= "Phantom"
+s:Ge/Ellipsoid1/Material      	= "G4_WATER"
+d:Ge/Ellipsoid1/TransZ        	= 0.10 mm
+
+d:Ge/Ellipsoid1/HLX           	= 0.025 mm
+d:Ge/Ellipsoid1/HLY           	= 0.025 mm
+d:Ge/Ellipsoid1/HLZ           	= 0.025 mm
+#comment out which ellipsoid shape you dont want
+#d:Ge/Ellipsoid1/HLX           	= 0.02 mm
+#d:Ge/Ellipsoid1/HLY           	= 0.02 mm
+#d:Ge/Ellipsoid1/HLZ           	= 0.0390625  mm
+s:Ge/Ellipsoid1/Color         	= "yellow"
+s:Ge/Ellipsoid1/DrawingStyle  	= "WireFrame"
+
+#----------------sphere 1 Nucleus ------------------------
+s:Ge/Sphere1_Nucleus/Type             	= "TsSphere"	#use relevant names for object
+s:Ge/Sphere1_Nucleus/Parent           	= "Ellipsoid1"	#make sure correct parents
+s:Ge/Sphere1_Nucleus/Material         	= "G4_WATER"
+d:Ge/Sphere1_Nucleus/TransZ           	= 0.0 mm
+d:Ge/Sphere1_Nucleus/RMax             	= 0.01 mm
+s:Ge/Sphere1_Nucleus/DrawingStyle     	= "Solid"
+s:Ge/Sphere1_Nucleus/Color            	= "grass"
+
+
+#-------------Defining Iodine 131 -------------
+
+#sv:Ma/MyIodine/Components  = 1 "MyElI"
+#uv:Ma/MyIodine/Fractions   = 1 1.0
+#d:Ma/MyIodine/Density  	= 4.933 g/cm3
+#s:Ma/MyIodine/DefaultColor = "green"
+
+#s:El/MyElI/Symbol         	= "MyElI"
+#sv:El/MyElI/IsotopeNames  	= 1 "I131"
+#uv:El/MyElI/IsotopeAbundances = 1 100
+
+#i:Is/I131/Z = 53
+#i:Is/I131/N = 131
+#d:Is/I131/A = 131.906 g/mole
+
+#------------Ellipsoid 2 Radioactive (self dose) ----------
+
+s:Ge/Ellipsoid2/Type          	= "G4Ellipsoid"
+s:Ge/Ellipsoid2/Parent        	= "Phantom"
+s:Ge/Ellipsoid2/Material      	= "G4_WATER"
+d:Ge/Ellipsoid2/TransZ        	= 0 mm
+d:Ge/Ellipsoid2/HLX           	= 0.025  mm
+d:Ge/Ellipsoid2/HLY           	= 0.025 mm
+d:Ge/Ellipsoid2/HLZ           	= 0.025 mm
+
+#comment out which ellipsoid shape you dont want
+#d:Ge/Ellipsoid2/HLX           	= 0.0390625 mm
+#d:Ge/Ellipsoid2/HLY           	= 0.02 mm
+#d:Ge/Ellipsoid2/HLZ           	= 0.02 mm
+
+s:Ge/Ellipsoid2/Color         	= "White"
+s:Ge/Ellipsoid2/DrawingStyle  	= "WireFrame"
+
+#-----------Sphere 2 Nucleus ---------
+s:Ge/Sphere2_Nucleus/Type 	= "TsSphere"
+s:Ge/Sphere2_Nucleus/Parent   = "Ellipsoid2"
+sc:Ge/Sphere2_Nucleus/Material = "G4_WATER"
+dc:Ge/Sphere2_Nucleus/RMax 	= 0.01 mm
+s:Ge/Sphere2_Nucleus/DrawingStyle     	= "Solid"
+s:Ge/Sphere2_Nucleus/Color            	= "blue"
+#add another line with "sphere2nucleus
+
+##########Volumetric Source#
+#only nucleus is radioactive
+#-----------Adding volumetric source to sphere 2 nucleus----
+#add both spheres
+s:So/RadiationSource/Type                 	= "Volumetric"
+s:So/RadiationSource/Component            	= "Sphere2_Nucleus"
+sc:So/RadiationSource/ActiveMaterial   	 = "G4_WATER"
+s:So/RadiationSource/BeamParticle         	= "e-"  
+ic:So/RadiationSource/NumberOfHistoriesInRun   = 100
+b:So/RadiationSource/RecursivelyIncludeChildren = "True"
+ic:So/RadiationSource/MaxNumberOfPointsToSample = 10000000 #
+
+s:So/RadiationSource/BeamEnergySpectrumType   	= "Discrete"
+dv:So/RadiationSource/BeamEnergySpectrumValues	= 1 0.18175 MeV
+uv:So/RadiationSource/BeamEnergySpectrumWeightsUnscaled   = 1 1
+
+# Scale these values to give total weight of 1.
+uv:So/RadiationSource/BeamEnergySpectrumWeights = 1 * So/RadiationSource/
+\BeamEnergySpectrumWeightsUnscaled
+
+i:Ts/ShowHistoryCountAtInterval = 100
+
+#----------Adding a Scorer Nucleus 1-------
+s:Sc/DoseAtNucleus1/Quantity              	= "DoseToMedium"
+s:Sc/DoseAtNucleus1/Component             	= "Nucleus1" #change to Nucleus1 and 2
+b:Sc/DoseAtNucleus1/OutputToConsole       	= "TRUE"
+s:Sc/DoseAtNucleus1/OutputFile            	= "DoseFile_Nucleus1_15"
+s:Sc/DoseAtNucleus1/OutputType            	= "csv"
+#s:Sc/DoseAtNucleus1/OutputType           	= "binary"
+s:Sc/DoseAtNucleus1/IfOutputFileAlreadyExists = "Increment"
+sv:Sc/DoseAtNucleus1/Report    	  	= 2 "Mean" "Standard_Deviation"
+
+#add scorer to nucleus
+#------Adding a Scorer Nucleus2--------
+s:Sc/DoseAtNucleus2/Quantity              	= "DoseToMedium"
+s:Sc/DoseAtNucleus2/Component             	= "Nucleus2" #change to Nucleus1 and 2
+b:Sc/DoseAtNucleus2/OutputToConsole       	= "TRUE"
+s:Sc/DoseAtNucleus2/OutputFile            	= "DoseFile_Nucleus2_15"
+s:Sc/DoseAtNucleus2/OutputType            	= "csv"
+#s:Sc/DoseAtNucleus2/OutputType           	= "binary"
+s:Sc/DoseAtNucleus2/IfOutputFileAlreadyExists = "Increment"
+sv:Sc/DoseAtNucleus2/Report    	  	= 2 "Mean" "Standard_Deviation" 
+
+#----Generate a Window to see the geometry----
+s:Gr/ViewA/Type                        	= "OpenGL"
+i:Gr/ViewA/WindowSizeX                  	= 500
+i:Gr/ViewA/WindowSizeY                  	= 500
+d:Gr/ViewA/Theta                        	= 85 deg
+d:Gr/ViewA/Phi                          	= 0 deg
+s:Gr/ViewA/Projection                   	= "Perspective"
+d:Gr/ViewA/PerspectiveAngle             	= 5 deg
+u:Gr/ViewA/Zoom                         	= 4
+b:Gr/ViewA/HiddenLineRemovalForTrajectories = "True"
+b:Ts/PauseBeforeQuit = "True"
+\end{verbatim}
